@@ -45,7 +45,8 @@ class Student:
         self.student_id = student_id
         self.courses = courses
     def add_course(self, new_course):
-        self.courses.append(new_course)
+        if new_course not in self.courses:
+            self.courses.append(new_course)
     def show_courses(self):
         print(f"{self.first_name} {self.last_name}-ს (პ.ნ. - {self.student_id}) კურსები: {self.courses}")
     def show_courses_quantity(self):
@@ -56,7 +57,8 @@ student_2 = Student("Ana", "Zaridze", "15003245122", ["კალკულუს�
 student_3 = Student("Dima", "Oboladze", "01010101011", ["ჯანსაღი კვება", "შესავალი მწვრთელობაში", "საუბრის ტექნიკა", "ანალიტიკა", "პირველადი დახმარება"])
 
 
-student_1.add_course("IT-Step-Python-Django")
+for i in range(10):
+    student_1.add_course("IT-Step-Python-Django")
 student_3.add_course("კომენტატორობა")
 student_2.add_course("ციფრული ტექნოლოგიები")
 student_1.show_courses_quantity()
