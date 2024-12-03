@@ -1,3 +1,4 @@
+import json
 
 # შევქმნათ სტუდენტის კლასი აუცილებელი ატრიბუტებით
 class Students:
@@ -25,6 +26,10 @@ class Students:
             raise ValueError("შეფასება უნდა იყოს A, B, C, D, E ან F")
         self._grade = new_grade
 
+    def to_dict(self):
+        return {"name": self._name, "roll_number": self._roll_number, "grade": self.grade}
+
+
     def __str__(self) -> str:
         return f'სახელი: "{self._name}", სიის ნომერი: "{self._roll_number}", შეფასება: "{self._grade}"'
 
@@ -32,8 +37,22 @@ class Students:
 class StudentManagementSystem:
 
     # შევქმნათ ცარიელი მასივი სტუდენტებისთვის
-    def __init__(self):
+    def __init__(self, file_name='studentsFile.json'):
+        self._file_name = file_name
         self.students = []
+        self.load_students_from_file()
+
+    def load_students_from_file(self):
+        try:
+            with open(self._file_name, 'r') as f:
+                data = json.load(f)
+                self.students = [Students(**student) for student in data]
+        except (FileNotFoundError, json.decoder.JSONDecodeError):
+            self.students = []
+
+    def save_students_to_file(self):
+        with open(self._file_name, 'w') as f:
+            json.dump([student.to_dict() for student in self.students], f, indent=4)
 
     # სტუდენტთა დამატების მეთოდი:
     def add_student(self, name: str, roll_number: int, grade: str) -> bool:
@@ -45,6 +64,7 @@ class StudentManagementSystem:
         try:
             student = Students(name, roll_number, grade)
             self.students.append(student)
+            self.save_students_to_file()
             print('სტუდენტი წარმატებით დაემატა!')
             return True
         except ValueError as e:
@@ -79,6 +99,7 @@ class StudentManagementSystem:
 
         try:
             student.grade = new_grade
+            self.save_students_to_file()
             print('შეფასება წარმატებით განახლდა!')
             return True
         except ValueError as e:
